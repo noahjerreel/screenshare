@@ -1,8 +1,14 @@
+
+
 {
-     "name": "v88_screensharing",
-     "description": "Screen sharing with socket.io",
-     "version": "0.0.1",
-     "dependencies": {
-        "socket.io": "0.8.4"
-     }
+	"name": "v88_screensharing",
+	"description": "Screen sharing with socket.io",
+	"version": "0.0.1",
+	"dependencies": {
+		"socket.io": "0.9.16"
+    },
+	"engines": {
+		"node": "0.10.x",
+		"npm": "1.2.x"
+	}
 }
