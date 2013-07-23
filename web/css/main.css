@@ -1,0 +1,102 @@
+ul.nav-tabs,
+ul.nav-tabs li:hover,
+ul.nav-tabs li.active,
+ul.nav-tabs li.active a,
+ul.nav-tabs li a:hover{
+	border: 0!important;
+}
+
+div.clear{
+	clear:both;
+}
+
+div#content{
+	margin-top: 60px;
+}
+
+	div#content form input{
+		line-height: 23px;
+		height: 31px;
+	}
+
+		div#content form div.input-append span{
+			height: 15px;
+			padding: 7px 5px;
+		}
+		
+		div#content div.users_container div.user_box{
+			margin: 0px 14px;
+			width: 240px;
+		}
+		
+		div#content div.users_container div.user_box:first-child{
+			margin-left: 0;
+		}
+
+			div#content div.users_container div.user_box div.screen_capture{
+				width: 240px;
+				height: 200px;
+				max-height: 200px;
+				background: #ccc;
+			}
+			
+				div#content div.users_container div.user_box div.screen_capture img{
+					width: 100%;
+					height: 100%;
+				}
+			
+			div#content div.users_container div.user_box div.user_information{
+				margin: 10px 0;
+			}
+			
+				div#content div.users_container div.user_box div.user_information div.user_picture{
+					width: 33px;
+					height: 31px;
+				}
+			
+				div#content div.users_container div.user_box div.user_information div.user_name{
+					margin: 2px 10px;
+					font-size: 16px;
+					font-weight: bold;
+				}
+				
+					div#content div.users_container div.user_box div.user_information div.user_name p {
+						max-width: 185px;
+					}
+			
+div#modal{
+	width: 530px;
+	border: 2px solid #000;
+}
+
+div#modal div.playback_container{
+	width: 100%;
+	height: 100%;
+}			
+
+
+div#modal div.playback_container img{
+	width: 530px;
+	height: 390px;
+}
+
+div#modal div.playback_container img.loader {
+	width: 128px;
+	height: 15px;
+	margin: 5px 201px;
+}			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+	
+	

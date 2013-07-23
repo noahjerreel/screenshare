@@ -1,0 +1,211 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<title>PMS Work Room</title>
+		<link rel="stylesheet" type="text/css" href='/web/css/bootstrap.css' />
+		<link rel="stylesheet" type="text/css" href='/web/css/font-awesome.css' />
+		<link rel="stylesheet" type="text/css" href='/web/css/main.css' />
+		
+		<script type='text/javascript' src="/web/js/jquery-1.8.2.js"></script>
+		<script type='text/javascript' src="/web/js/jquery-ui-1.9.1.custom.js"></script>
+		<script type='text/javascript' src="/web/js/bootstrap.js"></script>
+		<script type='text/javascript' src="http://192.168.1.10:8070/socket.io/socket.io.js"></script>
+		
+		<script>
+			var socket 			= io.connect('http://192.168.1.10:8070', {'reconnect': false});
+			var intervalID 	    = null;
+			var streaming 		= false;
+			
+			$(document).ready(function(){
+				
+				socket.on('connected', function (data) {
+					clearInterval(intervalID);
+				});
+				
+				socket.emit("connected", {IPAddress: null, Type: "web", Thumbnail: null, Image: null});
+
+				socket.on("load_users", function(data){
+					var html = build_user(data);
+					
+					if($("div.users_container").children("div.user_box").length > 0){
+						$("div.users_container").prepend(html);
+					}else{
+						$("div.users_container").html(html);					
+					}
+				});
+				
+				socket.on("display_image", function(data){
+					var client_id = data.client.id;
+					
+					if($("#div_"+client_id).children("div").length == 0)
+					{				
+						$("div.users_container").append(build_user(data));
+					}
+					
+					$("#" + client_id).attr("src", "data:image/jpeg;base64,"+ data.image);
+					
+				});
+				
+				
+				socket.on("start_streaming", function(data){
+					var image = document.getElementById("streaming");		
+					image.src = "data:image/jpeg;base64,"+ data.image;
+					
+					$("#modal").children('h2').html(data.client.name);
+				});
+				
+				socket.on("disconnect_user", function(data){					
+					$("#div_"+data.client.id).remove();
+				});
+				
+				$('#modal').modal({show:false});
+				
+				$('#modal').on('hidden', function () {
+					socket.emit('action', {action: 'thumbnail_streaming', client: $(this).attr("data-ip")});
+				})
+				
+				$("a.image_button").live("click", function(e){					
+					e.preventDefault()
+					e.stopPropagation()
+					
+					socket.emit('action', {action: 'video_streaming', client: $(this).attr("data-ip")});
+					$("#modal").attr("data-ip", $(this).attr("data-ip"));
+					
+					/*
+					var image = document.getElementById("streaming");
+					image.src = "/web/images/loader.gif";
+					
+					$("#streaming").attr('class', 'loader');
+					*/
+					
+					$("#modal").modal("show");
+				
+				});
+				
+				// Set the name of the hidden property and the change event for visibility
+				var hidden, visibilityChange; 
+				
+				if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+				  hidden = "hidden";
+				  visibilityChange = "visibilitychange";
+				} else if (typeof document.mozHidden !== "undefined") {
+				  hidden = "mozHidden";
+				  visibilityChange = "mozvisibilitychange";
+				} else if (typeof document.msHidden !== "undefined") {
+				  hidden = "msHidden";
+				  visibilityChange = "msvisibilitychange";
+				} else if (typeof document.webkitHidden !== "undefined") {
+				  hidden = "webkitHidden";
+				  visibilityChange = "webkitvisibilitychange";
+				}
+				 
+				function handleVisibilityChange() {
+				  if (document[hidden]) {
+					var window_status = false;
+				  } else {
+					var window_status = true;
+				  }
+				  
+				  socket.emit('status', {status: window_status});
+				}
+
+				// Warn if the browser doesn't support addEventListener or the Page Visibility API
+				if (typeof document.addEventListener === "undefined" || 
+				  typeof hidden === "undefined") {
+				  alert("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
+				} else {
+				  // Handle page visibility change   
+				  document.addEventListener(visibilityChange, handleVisibilityChange, false);
+				}
+			});	
+			
+			function build_user(data)
+			{
+				var client_id = data.client.id;
+				
+				return "<div id='div_"+client_id+"' class='user_box span3'>"+
+							"<div class='screen_capture'>" + 
+								"<a class='image_button' data-ip='"+data.client.ip+"' data-toggle='modal' href='#modal'><img id='"+client_id+"' /></a> "+
+							"</div> "+
+							"<div class='user_information'> "+
+								"<div class='user_picture pull-left'> "+
+									"<img src='/web/images/user_default.png'> "+
+								"</div> "+
+								"<div class='user_name pull-left'> "+
+									"<p class='name'>"+data.client.name+"</p> "+
+								"</div>"+ 
+							"</div>"+ 
+						"</div>";
+			}
+			
+			function reconnect()
+			{				
+				var socket_reconnect = function(){
+
+					if (socket.socket.connected === false &&
+						socket.socket.connecting === false) {
+						// use a connect() or reconnect() here if you want
+						socket.socket.connect()
+				   }
+				}
+
+				var intervalID = setInterval(socket_reconnect, 2000)
+			}
+			
+		</script>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class='container-fluid'>
+					<div class='row-fluid'>
+						<div class='brand_container pull-left'>
+							<p>
+								<a class="brand active" href="/">Project Management System</a>
+							</p>
+							<!--small>PMS</small-->
+						</div>
+						<ul class='nav nav-tabs pull-right'>
+							<li><a href="team" data-toggle="tab"><i class='icon-group'></i> Teams</a></li>
+							<li><a href="report" data-toggle="tab"><i class='icon-group'></i> Reports</a></li>
+							<li class='active'><a href="workroom" data-toggle="tab"><i class='icon-desktop'></i> Workroom</a></li>
+							<li><a href="setting" data-toggle="tab"><i class='icon-cog'></i> Settings</a></li>				
+						</ul>
+						<div class='clear'></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id='content'>
+			<div class='container-fluid'>
+				<div class='row-fluid'>
+					<form class='form form-horizontal'>
+						<select name='team' class='pull-left'>
+							<option value='0'>Show All</option>
+							<option value='1'>Software Team</option>
+							<option value='2'>Marketing Team</option>
+							<option value='3'>HR Team</option>
+							<option value='4'>Management Team</option>
+						</select>
+						<div class='pull-right'>
+							<div class='input-append'>
+								<input type='text' placeholder='Search Name' name='user_name' />
+								<span class='add-on'><i class='icon-user'></i></span>
+							</div>
+						</div>
+						<div class='clear'></div>
+					</form>
+					<div class='users_container'>
+						<!-- SOCKET -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="Play Back" aria-hidden="true">
+			<h2></h2>
+			<div class='playback_container'>
+				<img id='streaming' class='streaming' src=''>				
+			</div>
+		</div>
+	</body>
+</html>
