@@ -1,8 +1,7 @@
 
 var   server 	= require('http')
 	, fs 		= require('fs')
-	, url  	  	= require('url')
-	, address 	= "192.168.1.10";
+	, url  	  	= require('url');
 
 	
 var app = server.createServer(function(request, response){
@@ -30,7 +29,11 @@ io.sockets.on('connection', function (socket)
 		
 		if(socket.type == 'desktop'){		
 			socket.emit("load_image", {streaming: "thumbnail_streaming"}); 
-			load_intervals();
+			socket.stream_interval 	= 	setInterval(function(){
+											if(socket.screen_streaming == false){
+												socket.emit("load_image", {streaming: "thumbnail_streaming"}); 
+											}
+										}, 10000);
 		}
 	});
 	
@@ -82,6 +85,12 @@ io.sockets.on('connection', function (socket)
 			io.sockets.clients().forEach(function(client){
 				if(client.ip_address == data.client && client.type == 'desktop'){
 					client.screen_streaming = true;
+					clearInterval(client.stream_interval);
+					client.stream_interval 	= 	setInterval(function(){
+													if(client.screen_streaming == true){
+														client.emit("load_image", {streaming: "video_streaming"}); 
+													}
+												}, 10);
 				}
 			});
 		}
@@ -91,6 +100,12 @@ io.sockets.on('connection', function (socket)
 			io.sockets.clients().forEach(function(client){
 				if(client.ip_address == data.client && client.type == 'desktop'){
 					client.screen_streaming = false;
+					clearInterval(client.stream_interval);
+					client.stream_interval 	= 	setInterval(function(){
+													if(client.screen_streaming == true){
+														client.emit("load_image", {streaming: "video_streaming"}); 
+													}
+												}, 10000);
 				}
 			});
 		}
@@ -112,22 +127,8 @@ io.sockets.on('connection', function (socket)
 	});
 	
 	
-	function load_intervals()
-	{
-		socket.thumb_interval  	= 	setInterval(function(){
-											if(socket.screen_streaming == false){
-												socket.emit("load_image", {streaming: "thumbnail_streaming"}); 
-											}
-										}, 10000);
-			
-		socket.stream_interval 	= 	setInterval(function(){
-										if(socket.screen_streaming == true){
-											socket.emit("load_image", {streaming: "video_streaming"}); 
-										}
-									}, 10);
-	}
 });
 
-app.listen(8070, address);
+app.listen(5000);
 
  
