@@ -17,7 +17,6 @@
 			var streaming 		= false;
 			
 			$(document).ready(function(){
-				console.log(document.location.protocol + document.location.hostname');
 				
 				socket.on('connected', function (data) {
 					clearInterval(intervalID);
