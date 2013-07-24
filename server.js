@@ -1,7 +1,11 @@
 
-var   server 	= require('http')
-	, fs 		= require('fs')
-	, url  	  	= require('url');
+var   server 	= require('http');
+var   fs 		= require('fs');
+var   url  	  	= require('url');
+var   faye 		= require('faye');
+
+var workroom = new faye.NodeAdapter({mount: '/workroom', timeout: 45});
+bayeux.listen(8000);
 
 	
 var app = server.createServer(function(request, response){
@@ -11,10 +15,12 @@ var app = server.createServer(function(request, response){
 var port = process.env.PORT || 5000;
 var io = require('socket.io').listen(app);
 
+/*
 io.configure(function () { 
 	  io.set("transports", ["xhr-polling"]); 
 	  io.set("polling duration", 10); 
 });
+*/
 
 io.sockets.on('connection', function (socket) 
 {
@@ -129,6 +135,8 @@ io.sockets.on('connection', function (socket)
 	
 	
 });
+
+workroom.attach(app);
 
 app.listen(port, function(){
 	console.log("NodeJS server listening on port %d", app.address().port);
