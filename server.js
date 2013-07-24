@@ -8,7 +8,7 @@ var app = server.createServer(function(request, response){
 	require('./router')(request, response, url);	
 });
 
-
+var port = process.env.PORT || 5000;
 var io = require('socket.io').listen(app);
 
 io.configure(function () { 
@@ -130,7 +130,7 @@ io.sockets.on('connection', function (socket)
 	
 });
 
-app.listen(5000, function(){
+app.listen(port, function(){
 	console.log("NodeJS server listening on port %d", app.address().port);
 });
 

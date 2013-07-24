@@ -12,7 +12,7 @@
 		<script type='text/javascript' src="http://192.168.1.10:8070/socket.io/socket.io.js"></script>
 		
 		<script>
-			var socket 			= io.connect(document.location.protocol + document.location.hostname, {'reconnect': false});
+			var socket 			= io.connect(window.location.hostname);
 			var intervalID 	    = null;
 			var streaming 		= false;
 			
