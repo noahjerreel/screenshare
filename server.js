@@ -131,7 +131,7 @@ io.sockets.on('connection', function (socket)
 });
 
 app.listen(5000, function(){
-	console.log("NodeJS server listening on port %d", app.address().port, app.settings.env);
+	console.log("NodeJS server listening on port %d", app.address().port);
 });
 
  
