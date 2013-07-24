@@ -10,6 +10,7 @@ var app = server.createServer(function(request, response){
 
 
 var io = require('socket.io').listen(app);
+
 io.configure(function () { 
 	  io.set("transports", ["xhr-polling"]); 
 	  io.set("polling duration", 10); 
@@ -129,6 +130,8 @@ io.sockets.on('connection', function (socket)
 	
 });
 
-app.listen(5000);
+app.listen(5000, function(){
+	console.log("NodeJS server listening on port %d", app.address().port, app.settings.env);
+});
 
  

@@ -12,11 +12,12 @@
 		<script type='text/javascript' src="http://192.168.1.10:8070/socket.io/socket.io.js"></script>
 		
 		<script>
-			var socket 			= io.connect('http://192.168.1.10:8070', {'reconnect': false});
+			var socket 			= io.connect(document.location.protocol + document.location.hostname, {'reconnect': false});
 			var intervalID 	    = null;
 			var streaming 		= false;
 			
 			$(document).ready(function(){
+				console.log(document.location.protocol + document.location.hostname');
 				
 				socket.on('connected', function (data) {
 					clearInterval(intervalID);
