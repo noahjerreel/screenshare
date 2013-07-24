@@ -2,11 +2,6 @@
 var   server 	= require('http');
 var   fs 		= require('fs');
 var   url  	  	= require('url');
-var   faye 		= require('faye');
-
-var workroom = new faye.NodeAdapter({mount: '/workroom', timeout: 45});
-bayeux.listen(8000);
-
 	
 var app = server.createServer(function(request, response){
 	require('./router')(request, response, url);	
@@ -135,8 +130,6 @@ io.sockets.on('connection', function (socket)
 	
 	
 });
-
-workroom.attach(app);
 
 app.listen(port, function(){
 	console.log("NodeJS server listening on port %d", app.address().port);
