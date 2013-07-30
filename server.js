@@ -2,7 +2,7 @@
 var   server 	= require('http');
 var   fs 		= require('fs');
 var   url  	  	= require('url');
-
+var port = process.env.PORT || 5000;
 //Creating HTTP Server 	
 var app = server.createServer(function(request, response){
 	require('./router')(request, response, url);	
@@ -21,8 +21,8 @@ io.sockets.on('connection', function (socket)
 	});
 });
 
-app.listen(3000, function(){
-	console.log('NodeJS Server running at port 8080');
+app.listen(port, function(){
+	console.log('NodeJS Server running at port ' + port);
 });
 
  
