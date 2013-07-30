@@ -18,21 +18,7 @@
 			
 			$(document).ready(function(){
 				
-				socket.on('connected', function (data) {
-					clearInterval(intervalID);
-				});
-				
-				socket.emit("connected", {IPAddress: null, Type: "web", Thumbnail: null, Image: null});
-
-				socket.on("load_users", function(data){
-					var html = build_user(data);
-					
-					if($("div.users_container").children("div.user_box").length > 0){
-						$("div.users_container").prepend(html);
-					}else{
-						$("div.users_container").html(html);					
-					}
-				});
+				socket.emit("connected", {room: "web"});
 				
 				socket.on("display_image", function(data){
 					var client_id = data.client.id;
@@ -46,77 +32,6 @@
 					
 				});
 				
-				
-				socket.on("start_streaming", function(data){
-					var image = document.getElementById("streaming");		
-					image.src = "data:image/jpeg;base64,"+ data.image;
-					
-					$("#modal").children('h2').html(data.client.name);
-				});
-				
-				socket.on("disconnect_user", function(data){					
-					$("#div_"+data.client.id).remove();
-				});
-				
-				$('#modal').modal({show:false});
-				
-				$('#modal').on('hidden', function () {
-					socket.emit('action', {action: 'thumbnail_streaming', client: $(this).attr("data-ip")});
-				})
-				
-				$("a.image_button").live("click", function(e){					
-					e.preventDefault()
-					e.stopPropagation()
-					
-					socket.emit('action', {action: 'video_streaming', client: $(this).attr("data-ip")});
-					$("#modal").attr("data-ip", $(this).attr("data-ip"));
-					
-					/*
-					var image = document.getElementById("streaming");
-					image.src = "/web/images/loader.gif";
-					
-					$("#streaming").attr('class', 'loader');
-					*/
-					
-					$("#modal").modal("show");
-				
-				});
-				
-				// Set the name of the hidden property and the change event for visibility
-				var hidden, visibilityChange; 
-				
-				if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
-				  hidden = "hidden";
-				  visibilityChange = "visibilitychange";
-				} else if (typeof document.mozHidden !== "undefined") {
-				  hidden = "mozHidden";
-				  visibilityChange = "mozvisibilitychange";
-				} else if (typeof document.msHidden !== "undefined") {
-				  hidden = "msHidden";
-				  visibilityChange = "msvisibilitychange";
-				} else if (typeof document.webkitHidden !== "undefined") {
-				  hidden = "webkitHidden";
-				  visibilityChange = "webkitvisibilitychange";
-				}
-				 
-				function handleVisibilityChange() {
-				  if (document[hidden]) {
-					var window_status = false;
-				  } else {
-					var window_status = true;
-				  }
-				  
-				  socket.emit('status', {status: window_status});
-				}
-
-				// Warn if the browser doesn't support addEventListener or the Page Visibility API
-				if (typeof document.addEventListener === "undefined" || 
-				  typeof hidden === "undefined") {
-				  alert("This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.");
-				} else {
-				  // Handle page visibility change   
-				  document.addEventListener(visibilityChange, handleVisibilityChange, false);
-				}
 			});	
 			
 			function build_user(data)
@@ -125,7 +40,7 @@
 				
 				return "<div id='div_"+client_id+"' class='user_box span3'>"+
 							"<div class='screen_capture'>" + 
-								"<a class='image_button' data-ip='"+data.client.ip+"' data-toggle='modal' href='#modal'><img id='"+client_id+"' /></a> "+
+								"<img id='"+client_id+"' />"+
 							"</div> "+
 							"<div class='user_information'> "+
 								"<div class='user_picture pull-left'> "+

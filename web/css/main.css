@@ -34,8 +34,8 @@ div#content{
 		}
 
 			div#content div.users_container div.user_box div.screen_capture{
-				width: 240px;
-				height: 200px;
+				width: 100%;
+				height: 90%;
 				max-height: 200px;
 				background: #ccc;
 			}
