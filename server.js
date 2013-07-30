@@ -17,7 +17,7 @@ io.configure(function () {
 
 io.sockets.on('connection', function (socket) 
 {
-	socket.on('connect', function(data){
+	socket.on('connected', function(data){
 		socket.join(data.room);
 	});
 	
